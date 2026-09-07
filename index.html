@@ -1,174 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dev Portfolio | 3D</title>
-    <style>
-        /* --- CSS STYLES --- */
-        body { margin: 0; overflow-x: hidden; background-color: #050505; font-family: 'Segoe UI', sans-serif; color: white; }
-        
-        /* The Canvas where 3D lives */
-        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-
-        /* The Content Overlay */
-        main { position: relative; z-index: 1; padding: 50px 20px; max-width: 1000px; margin: 0 auto; }
-
-        /* Header Style */
-        header { text-align: center; margin-bottom: 100px; margin-top: 50px; }
-        h1 { font-size: 4rem; margin: 0; background: -webkit-linear-gradient(#00f2ff, #0078ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .subtitle { font-size: 1.5rem; color: #aaa; }
-
-        /* Project Cards (Glassmorphism) */
-        .section-title { font-size: 2rem; border-bottom: 2px solid #333; padding-bottom: 10px; margin-top: 80px; margin-bottom: 30px; }
-        
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 25px;
-            border-radius: 15px;
-            transition: transform 0.3s;
-        }
-        .card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.1); }
-        .card h3 { color: #00f2ff; margin-top: 0; }
-        .card p { color: #ccc; line-height: 1.6; }
-        
-        /* Buttons */
-        .btn { display: inline-block; margin-top: 15px; padding: 8px 20px; border: 1px solid #00f2ff; color: #00f2ff; text-decoration: none; border-radius: 5px; font-size: 0.9rem; }
-        .btn:hover { background: #00f2ff; color: #000; }
-
-        /* Footer */
-        footer { text-align: center; margin-top: 100px; color: #555; font-size: 0.8rem; }
-    </style>
-</head>
-<body>
-
-    <div id="canvas-container"></div>
-
-    <main>
-        <header>
-            <h1>KARAN PRAJAPAT</h1>
-            <p class="subtitle">Flutter Developer & 3D Enthusiast</p>
-            <p style="margin-top: 20px; font-size: 1.1rem; max-width: 600px; margin-left: auto; margin-right: auto;">
-                I have 2 years of experience crafting beautiful mobile apps with Flutter. 
-                Welcome to my 3D universe.
-            </p>
-        </header>
-
-        <h2 class="section-title">🚀 Flutter Projects</h2>
-        <div class="grid">
-            <div class="card">
-                <h3>Flutter E-Commerce App</h3>
-                <p>A full-featured shopping app with cart logic, payment gateway integration, and smooth 60fps animations.</p>
-                <a href="#" class="btn">View Code</a>
-            </div>
-            <div class="card">
-                <h3>Chat Messenger</h3>
-                <p>Real-time chat app using Firebase and Flutter. Features include image sharing and push notifications.</p>
-                <a href="#" class="btn">View Code</a>
-            </div>
-            <div class="card">
-                <h3>Fitness Tracker</h3>
-                <p>Uses local database (Hive) to track workouts and visualize progress with charts.</p>
-                <a href="#" class="btn">View Code</a>
-            </div>
-        </div>
-
-        <h2 class="section-title">🧪 Other Experiments</h2>
-        <div class="grid">
-            <div class="card">
-                <h3>Python Automation Script</h3>
-                <p>Automates daily email reports using Python and SMTP libraries.</p>
-                <a href="#" class="btn">View Code</a>
-            </div>
-            <div class="card">
-                <h3>My 3D Portfolio</h3>
-                <p>You are looking at it! Built with Three.js and vanilla JavaScript to learn WebGL concepts.</p>
-                <a href="#" class="btn">View Source</a>
-            </div>
-        </div>
-
-        <footer>
-            Built with Three.js • Hosted on GitHub Pages
-        </footer>
-    </main>
-
-    <script type="module">
-        import * as THREE from 'https://unpkg.com/three@0.126.0/build/three.module.js';
-
-        // 1. SETUP THE SCENE (Like a Scaffold in Flutter)
-        const scene = new THREE.Scene();
-        
-        // 2. SETUP CAMERA
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 30; // Move camera back so we can see objects
-
-        // 3. SETUP RENDERER (Draws the scene)
-        const renderer = new THREE.WebGLRenderer({ alpha: true }); // Alpha true = transparent background
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('canvas-container').appendChild(renderer.domElement);
-
-        // 4. ADD OBJECTS
-        
-        // --- OBJECT A: The Central "Tech" Icosahedron ---
-        const geometry = new THREE.IcosahedronGeometry(10, 0);
-        const material = new THREE.MeshBasicMaterial({ color: 0x00f2ff, wireframe: true });
-        const shape = new THREE.Mesh(geometry, material);
-        scene.add(shape);
-
-        // --- OBJECT B: The Starfield (Particles) ---
-        const starGeometry = new THREE.BufferGeometry();
-        const starCount = 2000;
-        const starPositions = new Float32Array(starCount * 3); // x, y, z for each star
-
-        for(let i = 0; i < starCount * 3; i++) {
-            starPositions[i] = (Math.random() - 0.5) * 200; // Spread stars across space
-        }
-
-        starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-        const starMaterial = new THREE.PointsMaterial({ size: 0.2, color: 0xffffff });
-        const stars = new THREE.Points(starGeometry, starMaterial);
-        scene.add(stars);
-
-        // 5. MOUSE INTERACTION (Parallax Effect)
-        let mouseX = 0;
-        let mouseY = 0;
-        
-        document.addEventListener('mousemove', (event) => {
-            mouseX = event.clientX / window.innerWidth - 0.5;
-            mouseY = event.clientY / window.innerHeight - 0.5;
-        });
-
-        // 6. ANIMATION LOOP (Like a TickerProvider in Flutter)
-        function animate() {
-            requestAnimationFrame(animate);
-
-            // Rotate the main shape
-            shape.rotation.x += 0.002;
-            shape.rotation.y += 0.002;
-
-            // Rotate the stars slowly
-            stars.rotation.y -= 0.0005;
-
-            // Move camera slightly based on mouse (Parallax)
-            camera.position.x += (mouseX * 10 - camera.position.x) * 0.05;
-            camera.position.y += (-mouseY * 10 - camera.position.y) * 0.05;
-            camera.lookAt(scene.position);
-
-            renderer.render(scene, camera);
-        }
-
-        animate();
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#05070b" />
+    <title>Karan Prajapat — Flutter Developer</title>
+    <meta
+      name="description"
+      content="Karan Prajapat — Flutter developer and software engineer. An interactive 3D portfolio of products, experiments and ideas turned into software."
+    />
+    <meta name="author" content="Karan Prajapat" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Karan Prajapat — Flutter Developer" />
+    <meta
+      property="og:description"
+      content="Building products, experimenting with technology, and turning ideas into software."
+    />
+    <meta property="og:image" content="./social-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2305070b'/><text x='16' y='22' font-family='monospace' font-size='16' font-weight='700' fill='%2366e0c0' text-anchor='middle'>K</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <div style="padding:48px;font-family:system-ui;color:#e8ecf4;background:#05070b">
+        <h1>Karan Prajapat</h1>
+        <p>Flutter Developer &middot; Software Engineer. This portfolio is an interactive 3D
+        experience and requires JavaScript. Reach me at hello@karanprajapat.dev.</p>
+      </div>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

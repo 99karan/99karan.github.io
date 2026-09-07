@@ -1,0 +1,42 @@
+:root {
+  /* Surface */
+  --ink-900: #04060a;
+  --ink-800: #05070b;
+  --ink-700: #090d14;
+  --ink-600: #0e131c;
+
+  /* Type */
+  --text: #e8ecf4;
+  --text-dim: #99a3b6;
+  --text-faint: #5b6577;
+
+  /* Accents — used sparingly */
+  --accent: #66e0c0;
+  --accent-soft: rgba(102, 224, 192, 0.14);
+  --accent-line: rgba(102, 224, 192, 0.32);
+  --blue: #8ab6ff;
+  --amber: #ffb46a;
+
+  /* Glass */
+  --glass: rgba(255, 255, 255, 0.035);
+  --glass-strong: rgba(255, 255, 255, 0.055);
+  --hairline: rgba(255, 255, 255, 0.09);
+  --hairline-soft: rgba(255, 255, 255, 0.055);
+
+  /* Type scale */
+  --font-display: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --step-mono: clamp(0.6rem, 0.52rem + 0.22vw, 0.72rem);
+  --step-body: clamp(0.86rem, 0.8rem + 0.24vw, 1rem);
+  --step-lead: clamp(1rem, 0.9rem + 0.5vw, 1.22rem);
+  --step-h2: clamp(1.9rem, 1.2rem + 3vw, 4rem);
+  --step-h1: clamp(2.4rem, 1.2rem + 5.6vw, 6.4rem);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --gutter: clamp(1.25rem, 1rem + 3vw, 5rem);
+  --safe-top: max(1.25rem, env(safe-area-inset-top));
+  --safe-bottom: max(1.25rem, env(safe-area-inset-bottom));
+}
