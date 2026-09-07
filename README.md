@@ -136,7 +136,7 @@ All three live in the `socials` array in `src/data/portfolio.ts`:
 ```ts
 export const socials = [
   { id: 'github',   label: 'GitHub',   handle: '@99karan',          url: 'https://github.com/99karan' },
-  { id: 'linkedin', label: 'LinkedIn', handle: 'in/karanprajapat',  url: 'https://www.linkedin.com/in/karanprajapat' },
+  { id: 'linkedin', label: 'LinkedIn', handle: 'in/karan-prajapat', url: 'https://www.linkedin.com/in/karan-prajapat-47a068175' },
   { id: 'email',    label: 'Email',    handle: profile.email,       url: `mailto:${profile.email}` },
 ];
 ```
@@ -184,6 +184,14 @@ Then set Pages → Source → `gh-pages` branch.
 </details>
 
 ---
+
+## Diagnosing a soft or slow render
+
+Add `?debug=1` to the URL. The overlay reports the device tier, the display's
+pixel ratio, the ratio actually being rendered at, and the canvas buffer size.
+If `render dpr` is flagged `THROTTLED`, the GPU could not hold frame rate and
+the renderer stepped down — depth of field is dropped first, resolution last.
+`?quality=low|mid|high` forces a tier.
 
 ## Performance notes
 

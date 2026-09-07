@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { AdaptiveEvents, PerformanceMonitor, Preload } from '@react-three/drei';
 import { CameraRig } from './CameraRig';
@@ -29,20 +29,23 @@ export function Experience({ onReady }: { onReady: () => void }) {
   const { portrait } = useAspect();
   const setDpr = useThree((state) => state.setDpr);
   const [min, max] = quality.dpr;
+  const [dof, setDof] = useState(quality.dof);
 
   return (
     <>
-      {/* Sustained frame drops lower the pixel ratio instead of tearing the
-          scene apart — the composition survives, the cost does not. */}
-      {/* Sustained frame drops lower the pixel ratio instead of tearing the
-          scene apart. It steps rather than sliding: an intermediate ratio on a
-          2x display reads as a blurry render, not as a smaller budget. */}
+      {/* When the GPU struggles, spend the budget on resolution, not on
+          effects: a lowered pixel ratio is visible on every glyph, while the
+          missing depth of field is not. So the effect goes first, and only a
+          hard fallback touches the pixel ratio. */}
       <PerformanceMonitor
         bounds={(refreshRate) => (refreshRate > 90 ? [50, 90] : [46, 58])}
         flipflops={3}
         onIncline={() => setDpr(max)}
-        onDecline={() => setDpr(Math.max(min, max * 0.75))}
-        onFallback={() => setDpr(min)}
+        onDecline={() => (dof ? setDof(false) : setDpr(Math.max(min, max * 0.85)))}
+        onFallback={() => {
+          setDof(false);
+          setDpr(min);
+        }}
       />
       <AdaptiveEvents />
 
@@ -52,7 +55,7 @@ export function Experience({ onReady }: { onReady: () => void }) {
 
       <World />
 
-      <Effects quality={quality} />
+      <Effects quality={quality} dof={dof} />
       <Preload all />
       <ReadySignal onReady={onReady} />
     </>

@@ -63,7 +63,7 @@ function detectTier(): { tier: Tier; isMobile: boolean; isTouch: boolean } {
 
 const PRESETS: Record<Tier, Omit<Quality, 'tier' | 'isMobile' | 'isTouch' | 'reducedMotion'>> = {
   high: {
-    dpr: [1, 2],
+    dpr: [1.5, 2],
     shadows: true,
     shadowSize: 1024,
     bloom: true,
@@ -79,7 +79,7 @@ const PRESETS: Record<Tier, Omit<Quality, 'tier' | 'isMobile' | 'isTouch' | 'red
     segments: 12,
   },
   mid: {
-    dpr: [1, 1.6],
+    dpr: [1.25, 2],
     shadows: true,
     shadowSize: 512,
     bloom: true,
@@ -95,7 +95,7 @@ const PRESETS: Record<Tier, Omit<Quality, 'tier' | 'isMobile' | 'isTouch' | 'red
     segments: 8,
   },
   low: {
-    dpr: [1, 1.35],
+    dpr: [1, 1.75],
     shadows: false,
     shadowSize: 512,
     bloom: true,

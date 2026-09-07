@@ -5,6 +5,7 @@ import { Topbar } from './components/Topbar';
 import { Navigation } from './components/Navigation';
 import { SectionPanels } from './components/SectionPanels';
 import { Ambience } from './components/Overlay';
+import { DebugHud } from './components/DebugHud';
 import { ProjectSheet } from './components/ProjectSheet';
 import { ResumeSheet } from './components/ResumeSheet';
 import { SceneBoundary } from './components/SceneBoundary';
@@ -89,6 +90,7 @@ function Experience({ quality }: { quality: Quality }) {
       <ResumeSheet />
 
       {quality.grain && <div className="grain" aria-hidden="true" />}
+      {new URLSearchParams(window.location.search).has('debug') && <DebugHud quality={quality} />}
 
       {!revealed && (
         <Loader fontsReady={fontsReady} sceneReady={sceneReady} onDone={() => setRevealed(true)} />
