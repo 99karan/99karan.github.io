@@ -16,7 +16,7 @@ export const IslandProvider = IslandContext.Provider;
  * a neighbouring island still hangs in frame at ~10% opacity, which reads as a
  * rendering bug rather than depth.
  */
-export const islandFade = (presence: number) => smoothstep((presence - 0.22) / 0.78);
+export const islandFade = (presence: number) => smoothstep((presence - 0.32) / 0.68);
 
 /**
  * How present the surrounding island is, 0 → 1. Emissive surfaces read it every

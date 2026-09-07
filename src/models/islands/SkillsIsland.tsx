@@ -188,7 +188,7 @@ function Core() {
   return (
     <group>
       <mesh ref={inner}>
-        <icosahedronGeometry args={[0.38, quality.tier === 'low' ? 0 : 1]} />
+        <icosahedronGeometry args={[0.3, quality.tier === 'low' ? 0 : 1]} />
         <meshBasicMaterial color="#66e0c0" toneMapped={false} />
       </mesh>
       <mesh ref={shell}>

@@ -51,8 +51,11 @@ const toVec = (v: Vec3) => new THREE.Vector3(...v);
  * which also gives the transition something to look at.
  */
 const VIA: Record<number, Vec3> = {
+  // hero → about: swing wide of the desk instead of grazing the holo panel
+  // hanging off its left edge.
+  0: [-4.6, 2.6, 2.6],
   // skills → projects: pass to the left of the orbiting core.
-  2: [-1.2, 3.2, -29.5],
+  2: [-2.4, 3.0, -29.5],
   // projects → experience: lift over the gallery instead of through it.
   3: [0.6, 7.6, -50],
 };

@@ -121,8 +121,8 @@ export const drawMonitor =
 
     ctx.fillStyle = P.text;
     ctx.font = display(h * 0.135, 500);
-    ctx.shadowColor = rgba(P.accent, 0.32);
-    ctx.shadowBlur = h * 0.06;
+    ctx.shadowColor = rgba(P.accent, 0.22);
+    ctx.shadowBlur = h * 0.018;
     tracked(ctx, name, px, h * 0.475, h * 0.016, 'center');
     ctx.shadowBlur = 0;
 
@@ -309,8 +309,8 @@ export const drawProfilePanel =
     tracked(ctx, name, w * 0.07, h * 0.36, h * 0.014);
 
     ctx.fillStyle = rgba(P.accent, 0.85);
-    ctx.font = mono(h * 0.055);
-    tracked(ctx, role.toUpperCase(), w * 0.07, h * 0.46, h * 0.014);
+    ctx.font = mono(h * 0.042);
+    tracked(ctx, role.toUpperCase(), w * 0.07, h * 0.46, h * 0.008);
 
     const rows: [string, string][] = [
       ['LOCATION', location],
@@ -337,7 +337,7 @@ export const drawStatPlate =
   (value: string, label: string, note: string, color: string = P.accent): Draw =>
   (ctx, w, h) => {
     ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = rgba(color, 0.016);
+    ctx.fillStyle = rgba(color, 0.01);
     roundRect(ctx, 2, 2, w - 4, h - 4, 6);
     ctx.fill();
     ctx.strokeStyle = rgba(color, 0.18);
@@ -348,16 +348,16 @@ export const drawStatPlate =
     ctx.fillRect(0, 0, 3, h);
 
     ctx.fillStyle = rgba(P.text, 0.95);
-    ctx.font = display(h * 0.3, 500);
-    ctx.fillText(value, w * 0.07, h * 0.44);
+    ctx.font = display(h * 0.28, 500);
+    ctx.fillText(value, w * 0.07, h * 0.42);
 
-    ctx.fillStyle = rgba(color, 0.85);
-    ctx.font = mono(h * 0.1, 500);
-    tracked(ctx, label.toUpperCase(), w * 0.07, h * 0.66, h * 0.03);
+    ctx.fillStyle = rgba(color, 0.9);
+    ctx.font = mono(h * 0.095, 500);
+    tracked(ctx, label.toUpperCase(), w * 0.07, h * 0.65, h * 0.028);
 
-    ctx.fillStyle = rgba(P.dim, 0.7);
-    ctx.font = display(h * 0.1, 300);
-    ctx.fillText(note, w * 0.07, h * 0.86);
+    ctx.fillStyle = rgba(P.dim, 0.85);
+    ctx.font = display(h * 0.095, 300);
+    ctx.fillText(note, w * 0.07, h * 0.87);
   };
 
 /* ------------------------------------------------------------------ */
@@ -371,8 +371,8 @@ export const drawSkillLabel =
     ctx.font = mono(h * 0.46, 500);
     ctx.textAlign = 'center';
     ctx.fillStyle = rgba(color, 0.95);
-    ctx.shadowColor = rgba(color, 0.5);
-    ctx.shadowBlur = h * 0.2;
+    ctx.shadowColor = rgba(color, 0.4);
+    ctx.shadowBlur = h * 0.07;
     tracked(ctx, name.toUpperCase(), w / 2, h * 0.63, h * 0.06, 'center');
     ctx.shadowBlur = 0;
     ctx.textAlign = 'left';
@@ -679,8 +679,8 @@ export const drawTitlePlate =
     ctx.textAlign = 'center';
     ctx.fillStyle = rgba(P.text, 0.95);
     ctx.font = display(h * 0.34, 500);
-    ctx.shadowColor = rgba(P.accent, 0.28);
-    ctx.shadowBlur = h * 0.14;
+    ctx.shadowColor = rgba(P.accent, 0.24);
+    ctx.shadowBlur = h * 0.05;
     tracked(ctx, title, w / 2, h * 0.44, h * 0.03, 'center');
     ctx.shadowBlur = 0;
     ctx.fillStyle = rgba(P.accent, 0.75);

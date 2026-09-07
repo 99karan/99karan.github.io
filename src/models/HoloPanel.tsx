@@ -24,7 +24,9 @@ interface HoloPanelProps {
   deps?: unknown[];
 }
 
-const PX_PER_UNIT = 420;
+// Holograms are read at close range on high-DPI screens, so they are drawn
+// well above 1:1 and mipped down rather than up.
+const PX_PER_UNIT = 512;
 
 /**
  * A flat holographic surface: a canvas-drawn texture on an additive plane.

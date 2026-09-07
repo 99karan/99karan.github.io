@@ -34,10 +34,14 @@ export function Experience({ onReady }: { onReady: () => void }) {
     <>
       {/* Sustained frame drops lower the pixel ratio instead of tearing the
           scene apart — the composition survives, the cost does not. */}
+      {/* Sustained frame drops lower the pixel ratio instead of tearing the
+          scene apart. It steps rather than sliding: an intermediate ratio on a
+          2x display reads as a blurry render, not as a smaller budget. */}
       <PerformanceMonitor
-        bounds={() => [48, 58]}
+        bounds={(refreshRate) => (refreshRate > 90 ? [50, 90] : [46, 58])}
         flipflops={3}
-        onChange={({ factor }) => setDpr(min + (max - min) * factor)}
+        onIncline={() => setDpr(max)}
+        onDecline={() => setDpr(Math.max(min, max * 0.75))}
         onFallback={() => setDpr(min)}
       />
       <AdaptiveEvents />

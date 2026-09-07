@@ -1,20 +1,34 @@
-import { EffectComposer, Bloom, DepthOfField, N8AO, Noise, Vignette } from '@react-three/postprocessing';
-import { BlendFunction, KernelSize } from 'postprocessing';
+import { useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { Bloom, DepthOfField, EffectComposer, Noise, Vignette } from '@react-three/postprocessing';
+import { BlendFunction, KernelSize, type DepthOfFieldEffect } from 'postprocessing';
+import * as THREE from 'three';
+import { focusPoint } from './focus';
 import type { Quality } from '../hooks/useQuality';
 
 /**
- * Post pipeline, tier-gated. Bloom is the only effect every device gets, and it
- * runs with a high luminance threshold so it lifts screens and emissive edges
- * rather than washing the whole frame.
+ * Post pipeline, tier-gated.
+ *
+ * Two things here decide whether the site looks crisp or smeared:
+ * depth of field must track what the camera is actually looking at, and bloom
+ * must sit high enough above the mid-tones that it lifts emissive edges
+ * instead of blooming every line of text.
  */
 export function Effects({ quality }: { quality: Quality }) {
+  const dof = useRef<DepthOfFieldEffect>(null);
+
+  useFrame(() => {
+    const target = dof.current?.target;
+    if (target) target.copy(focusPoint);
+  });
+
   if (quality.tier === 'low') {
     return (
       <EffectComposer multisampling={0} enableNormalPass={false}>
         <Bloom
           intensity={quality.bloomIntensity}
-          luminanceThreshold={0.62}
-          luminanceSmoothing={0.3}
+          luminanceThreshold={0.74}
+          luminanceSmoothing={0.22}
           kernelSize={KernelSize.MEDIUM}
           mipmapBlur
         />
@@ -24,26 +38,29 @@ export function Effects({ quality }: { quality: Quality }) {
   }
 
   return (
-    <EffectComposer multisampling={quality.tier === 'high' ? 2 : 0} enableNormalPass={false}>
-      {quality.ao ? (
-        <N8AO aoRadius={1.4} intensity={1.5} distanceFalloff={0.8} quality="low" halfRes color="#04060a" />
-      ) : (
-        <></>
-      )}
+    <EffectComposer multisampling={quality.tier === 'high' ? 4 : 0} enableNormalPass={false}>
       <Bloom
         intensity={quality.bloomIntensity}
-        luminanceThreshold={0.58}
-        luminanceSmoothing={0.28}
+        luminanceThreshold={0.72}
+        luminanceSmoothing={0.2}
         kernelSize={KernelSize.LARGE}
         mipmapBlur
       />
       {quality.dof ? (
-        <DepthOfField worldFocusDistance={10.4} worldFocusRange={9} bokehScale={2.6} resolutionScale={0.85} />
+        <DepthOfField
+          ref={dof}
+          // A non-null target switches the effect into auto-focus mode; the
+          // vector itself is refreshed every frame from the camera rig.
+          target={new THREE.Vector3()}
+          worldFocusRange={7}
+          bokehScale={1.9}
+          resolutionScale={1}
+        />
       ) : (
         <></>
       )}
-      <Vignette offset={0.24} darkness={0.78} blendFunction={BlendFunction.NORMAL} />
-      {quality.grain ? <Noise opacity={0.028} premultiply blendFunction={BlendFunction.SCREEN} /> : <></>}
+      <Vignette offset={0.24} darkness={0.76} blendFunction={BlendFunction.NORMAL} />
+      {quality.grain ? <Noise opacity={0.022} premultiply blendFunction={BlendFunction.SCREEN} /> : <></>}
     </EffectComposer>
   );
 }

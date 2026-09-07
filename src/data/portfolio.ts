@@ -216,8 +216,8 @@ export const socials = [
   {
     id: 'linkedin',
     label: 'LinkedIn',
-    handle: 'in/karanprajapat',
-    url: 'https://www.linkedin.com/in/karanprajapat',
+    handle: 'in/karan-prajapat',
+    url: 'https://www.linkedin.com/in/karan-prajapat-47a068175',
   },
   { id: 'email', label: 'Email', handle: profile.email, url: `mailto:${profile.email}` },
 ] as const;

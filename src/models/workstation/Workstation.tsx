@@ -50,8 +50,8 @@ export function Workstation() {
           draw={drawHoloWave}
           width={0.68}
           height={0.4}
-          position={[1.42, 1.16, 0.5]}
-          rotation={[0, -0.62, 0]}
+          position={[-1.88, 1.04, 0.52]}
+          rotation={[0, 0.6, 0]}
           parallax={0.16}
           phase={4.3}
         />
@@ -72,7 +72,7 @@ export function Workstation() {
       </Float>
       {quality.props && (
         <Float speed={0.9} rotationIntensity={0.6} floatIntensity={0.4}>
-          <mesh position={[-2.05, 0.62, 1.1]}>
+          <mesh position={[-2.32, 1.16, 0.15]}>
             <octahedronGeometry args={[0.14, 0]} />
             <meshStandardMaterial color="#141b24" roughness={0.2} metalness={1} envMapIntensity={1.5} flatShading />
           </mesh>

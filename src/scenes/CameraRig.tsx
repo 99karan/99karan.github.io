@@ -13,6 +13,7 @@ import {
   timelineCameraOffset,
 } from './layout';
 import { projects } from '../data/portfolio';
+import { focusPoint } from './focus';
 import { useUI } from '../state/ui';
 
 const UP = new THREE.Vector3(0, 1, 0);
@@ -117,6 +118,8 @@ export function CameraRig({ portrait }: { portrait: boolean }) {
     camera.position.x = damp(camera.position.x, pos.current.x, lambda, dt);
     camera.position.y = damp(camera.position.y, pos.current.y, lambda, dt);
     camera.position.z = damp(camera.position.z, pos.current.z, lambda, dt);
+
+    focusPoint.copy(look.current);
 
     mat.lookAt(camera.position, look.current, UP);
     quat.setFromRotationMatrix(mat);

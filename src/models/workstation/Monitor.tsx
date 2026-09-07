@@ -18,8 +18,8 @@ export function Monitor() {
   const glow = useRef<THREE.PointLight>(null);
 
   const texture = useCanvasTexture(
-    Math.round(1792 * quality.textureScale),
-    Math.round(1120 * quality.textureScale),
+    Math.round(2304 * quality.textureScale),
+    Math.round(1440 * quality.textureScale),
     drawMonitor(profile.name, profile.role, profile.tagline),
   );
 
@@ -63,10 +63,9 @@ export function Monitor() {
         <planeGeometry args={[SCREEN_W, SCREEN_H]} />
         <meshPhysicalMaterial
           transparent
-          opacity={0.14}
-          roughness={0.08}
+          opacity={0.05}
+          roughness={0.12}
           metalness={0}
-          clearcoat={1}
           color="#9fd8ff"
           depthWrite={false}
         />
