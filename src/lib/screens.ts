@@ -337,10 +337,10 @@ export const drawStatPlate =
   (value: string, label: string, note: string, color: string = P.accent): Draw =>
   (ctx, w, h) => {
     ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = rgba(color, 0.045);
+    ctx.fillStyle = rgba(color, 0.016);
     roundRect(ctx, 2, 2, w - 4, h - 4, 6);
     ctx.fill();
-    ctx.strokeStyle = rgba(color, 0.22);
+    ctx.strokeStyle = rgba(color, 0.18);
     ctx.lineWidth = 1.5;
     roundRect(ctx, 2, 2, w - 4, h - 4, 6);
     ctx.stroke();

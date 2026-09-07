@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { ThreeEvent } from '@react-three/fiber';
 import { damp } from '../animations/easing';
+import { useIslandPresence } from '../scenes/IslandContext';
 
 /** Pointer-over state plus a managed cursor, safe on touch devices. */
 export function useHover(enabled = true) {
@@ -115,10 +116,18 @@ export function Halo({
   opacity = 0.5,
   ...props
 }: { radius: number; thickness?: number; color?: string; opacity?: number } & React.ComponentProps<'mesh'>) {
+  const material = useRef<THREE.MeshBasicMaterial>(null);
+  const presence = useIslandPresence();
+
+  useFrame(() => {
+    if (material.current) material.current.opacity = opacity * presence();
+  });
+
   return (
     <mesh {...props}>
       <ringGeometry args={[radius, radius + thickness, 64]} />
       <meshBasicMaterial
+        ref={material}
         color={color}
         transparent
         opacity={opacity}

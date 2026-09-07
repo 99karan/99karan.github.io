@@ -9,6 +9,7 @@ import { useAspect } from '../../hooks/useAspect';
 import { Halo, useHover } from '../shared';
 import { damp } from '../../animations/easing';
 import { PALETTE } from '../../lib/palette';
+import { useIslandPresence } from '../../scenes/IslandContext';
 
 type Social = (typeof socials)[number];
 
@@ -18,6 +19,7 @@ function SocialPlate({ social, position, index }: { social: Social; position: [n
   const ring = useRef<THREE.Mesh>(null);
   const quality = useQualityContext();
   const { hovered, bind } = useHover();
+  const presence = useIslandPresence();
 
   const texture = useCanvasTexture(
     Math.round(384 * Math.max(0.7, quality.textureScale)),
@@ -33,10 +35,11 @@ function SocialPlate({ social, position, index }: { social: Social; position: [n
     const t = state.clock.elapsedTime;
     g.position.y = damp(g.position.y, position[1] + (hovered ? 0.16 : 0) + Math.sin(t * 0.55 + index) * 0.06, 4, dt);
     g.scale.setScalar(damp(g.scale.x, hovered ? 1.12 : 1, 7, dt));
-    if (mat.current) mat.current.opacity = damp(mat.current.opacity, hovered ? 1 : 0.72, 6, dt);
+    const p = presence();
+    if (mat.current) mat.current.opacity = damp(mat.current.opacity, hovered ? 1 : 0.72, 6, dt) * p;
     if (ring.current) {
       const m = ring.current.material as THREE.MeshBasicMaterial;
-      m.opacity = damp(m.opacity, hovered ? 0.55 : 0.16, 6, dt);
+      m.opacity = damp(m.opacity, hovered ? 0.55 : 0.16, 6, dt) * p;
       ring.current.rotation.z += dt * (hovered ? 0.5 : 0.12);
     }
   });
@@ -92,6 +95,8 @@ export function ContactIsland() {
   const quality = useQualityContext();
   const portal = useRef<THREE.Group>(null);
   const motes = useRef<THREE.Points>(null);
+  const moteMat = useRef<THREE.PointsMaterial>(null);
+  const presence = useIslandPresence();
 
   const moteGeometry = useMemo(() => {
     const count = Math.round(quality.particles * 0.22);
@@ -115,6 +120,7 @@ export function ContactIsland() {
       portal.current.scale.setScalar(1 + Math.sin(t * 0.35) * 0.015);
     }
     if (motes.current) motes.current.rotation.y = t * 0.04;
+    if (moteMat.current) moteMat.current.opacity = 0.55 * presence();
   });
 
   const spacing = portrait ? 1.4 : 2.3;
@@ -130,6 +136,7 @@ export function ContactIsland() {
 
       <points ref={motes} geometry={moteGeometry} position={[0, 0, -1]}>
         <pointsMaterial
+          ref={moteMat}
           size={0.035}
           color={PALETTE.accent}
           transparent

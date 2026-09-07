@@ -8,17 +8,21 @@ import { profile, stats } from '../../data/portfolio';
 import { useAspect } from '../../hooks/useAspect';
 import { useQualityContext } from '../../hooks/QualityContext';
 import { PALETTE } from '../../lib/palette';
+import { useIslandPresence } from '../../scenes/IslandContext';
 
-const STAT_COLORS = [PALETTE.accent, PALETTE.blue, PALETTE.amber, PALETTE.accent];
+const STAT_COLORS = [PALETTE.accent, PALETTE.accent, PALETTE.accent, PALETTE.accent];
 
 /** Slow wireframe shell that gives the panel something to sit in front of. */
 function DataShell() {
   const ref = useRef<THREE.Group>(null);
+  const line = useRef<THREE.LineBasicMaterial>(null);
+  const presence = useIslandPresence();
   const geometry = useMemo(() => new THREE.IcosahedronGeometry(2.15, 1), []);
   const edges = useMemo(() => new THREE.EdgesGeometry(geometry), [geometry]);
 
   useFrame((state, delta) => {
     if (!ref.current) return;
+    if (line.current) line.current.opacity = 0.5 * presence();
     ref.current.rotation.y += delta * 0.045;
     ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.12) * 0.1;
   });
@@ -26,7 +30,7 @@ function DataShell() {
   return (
     <group ref={ref}>
       <lineSegments geometry={edges}>
-        <lineBasicMaterial color="#1c3a44" transparent opacity={0.5} toneMapped={false} />
+        <lineBasicMaterial ref={line} color="#1c3a44" transparent opacity={0.5} toneMapped={false} />
       </lineSegments>
     </group>
   );

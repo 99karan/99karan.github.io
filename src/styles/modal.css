@@ -4,16 +4,24 @@
   z-index: 20;
   display: grid;
   pointer-events: none;
+  /* `opacity: 0` alone is not enough: a closed panel still composites its
+     backdrop-filter, which ghosts the resume card over the scene. */
+  visibility: hidden;
+  transition: visibility 0s linear 0.75s;
 }
 
 .sheet[data-open='true'] {
   pointer-events: auto;
+  visibility: visible;
+  transition: visibility 0s linear 0s;
 }
 
 .sheet__scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(4, 6, 10, 0.55), rgba(4, 6, 10, 0.86));
+  /* Lighter over the scene, heavier behind the panel: the project the camera
+     just pushed into should still read. */
+  background: linear-gradient(100deg, rgba(4, 6, 10, 0.3) 0%, rgba(4, 6, 10, 0.62) 55%, rgba(4, 6, 10, 0.85) 100%);
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
   opacity: 0;

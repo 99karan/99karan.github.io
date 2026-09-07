@@ -11,8 +11,9 @@ import { useUI } from '../../state/ui';
 import { useHover, Halo } from '../shared';
 import { damp } from '../../animations/easing';
 import { journey } from '../../state/journey';
+import { useIslandPresence } from '../../scenes/IslandContext';
 
-const RING_RADII = [1.6, 2.4, 3.15];
+const RING_RADII = [1.42, 2.08, 2.72];
 const RING_TILT: [number, number][] = [
   [0.42, 0.1],
   [-0.3, -0.22],
@@ -37,6 +38,7 @@ function SkillOrb({ skill, index, ringIndex, angle, radius, active }: OrbProps) 
   const { camera } = useThree();
   const { setHoveredSkill } = useUI();
   const { hovered, bind } = useHover();
+  const presence = useIslandPresence();
 
   const texture = useCanvasTexture(
     Math.round(384 * Math.max(0.7, quality.textureScale)),
@@ -72,7 +74,7 @@ function SkillOrb({ skill, index, ringIndex, angle, radius, active }: OrbProps) 
       cam.copy(camera.position);
       g.parent.worldToLocal(cam);
       dir.copy(cam).sub(base).normalize();
-      base.addScaledVector(dir, 1.15);
+      base.addScaledVector(dir, 1.05);
     }
 
     g.position.x = damp(g.position.x, base.x, 5, dt);
@@ -93,7 +95,8 @@ function SkillOrb({ skill, index, ringIndex, angle, radius, active }: OrbProps) 
 
     if (labelMat.current) {
       const target = isActive ? 1 : dimmed ? 0.16 : 0.6;
-      labelMat.current.opacity = damp(labelMat.current.opacity, target * (0.35 + journey.local * 0.65), 6, dt);
+      const settled = 0.35 + journey.local * 0.65;
+      labelMat.current.opacity = damp(labelMat.current.opacity, target * settled, 6, dt) * presence();
     }
   });
 
@@ -157,9 +160,20 @@ function Core() {
   const inner = useRef<THREE.Mesh>(null);
   const light = useRef<THREE.PointLight>(null);
   const quality = useQualityContext();
+  const presence = useIslandPresence();
 
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime;
+    const p = presence();
+    if (inner.current) {
+      const mat = inner.current.material as THREE.MeshBasicMaterial;
+      mat.transparent = true;
+      mat.opacity = p;
+    }
+    if (shell.current) {
+      const mat = shell.current.material as THREE.MeshBasicMaterial;
+      mat.opacity = 0.28 * p;
+    }
     if (shell.current) {
       shell.current.rotation.y += delta * 0.12;
       shell.current.rotation.x -= delta * 0.06;
@@ -168,7 +182,7 @@ function Core() {
       inner.current.rotation.y -= delta * 0.28;
       inner.current.scale.setScalar(1 + Math.sin(t * 1.4) * 0.035);
     }
-    if (light.current) light.current.intensity = 9 + Math.sin(t * 1.9) * 1.2;
+    if (light.current) light.current.intensity = (9 + Math.sin(t * 1.9) * 1.2) * p;
   });
 
   return (
@@ -213,7 +227,7 @@ export function SkillsIsland() {
   });
 
   return (
-    <group position={[portrait ? 0 : 0.7, 0, 0]} scale={portrait ? 0.66 : 1}>
+    <group position={[portrait ? 0 : 1.25, 0, 0]} scale={portrait ? 0.66 : 1}>
       <Core />
 
       <group ref={rings}>
@@ -234,7 +248,7 @@ export function SkillsIsland() {
       ))}
 
       {quality.props && (
-        <Halo radius={4.1} thickness={0.003} color="#1d3d44" opacity={0.5} rotation={[Math.PI / 2, 0, 0]} />
+        <Halo radius={3.35} thickness={0.003} color="#1d3d44" opacity={0.5} rotation={[Math.PI / 2, 0, 0]} />
       )}
     </group>
   );

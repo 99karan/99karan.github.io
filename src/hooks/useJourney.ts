@@ -3,6 +3,8 @@ import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import {
   LAST_SECTION,
+  OUTRO_START,
+  TRAVEL_END,
   getIndex,
   journey,
   publishIndex,
@@ -37,7 +39,7 @@ export function useJourneyIndex() {
 
 /** Total scrollable height, in px, for the whole journey. */
 export function journeyHeight() {
-  return Math.round(window.innerHeight * (LAST_SECTION * 1.15 + 1.35));
+  return Math.round(window.innerHeight * (LAST_SECTION * 1.15 + 2.2));
 }
 
 /**
@@ -72,20 +74,21 @@ export function useJourneyDriver(active: boolean) {
       last = now;
 
       journey.scroll = clamp(window.scrollY / maxScroll);
-      journey.flow = damp(journey.flow, plateau(journey.scroll, LAST_SECTION), 7, dt);
+      journey.travel = clamp(journey.scroll / TRAVEL_END);
+      journey.flow = damp(journey.flow, plateau(journey.travel, LAST_SECTION), 7, dt);
 
       const nearest = Math.round(journey.flow);
       journey.local = clamp(1 - Math.abs(journey.flow - nearest) * 2.6);
       // 0 → 1 across the raw scroll band that belongs to the current section,
       // used for travel *within* a section (the timeline walk).
-      journey.band = clamp(journey.scroll * LAST_SECTION - (nearest - 0.5));
+      journey.band = clamp(journey.travel * LAST_SECTION - (nearest - 0.5));
       publishIndex(nearest);
 
       journey.pointer.x = damp(journey.pointer.x, journey.pointerTarget.x, 3.4, dt);
       journey.pointer.y = damp(journey.pointer.y, journey.pointerTarget.y, 3.4, dt);
 
       journey.focusBlend = damp(journey.focusBlend, journey.focus ? 1 : 0, 3.6, dt);
-      journey.outro = clamp((journey.scroll - 0.965) / 0.035);
+      journey.outro = clamp((journey.scroll - OUTRO_START) / (1 - OUTRO_START));
 
       frameListeners.forEach((fn) => fn(dt));
       raf = requestAnimationFrame(tick);

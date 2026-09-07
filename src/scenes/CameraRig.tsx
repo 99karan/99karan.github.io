@@ -4,11 +4,11 @@ import * as THREE from 'three';
 import { journey, LAST_SECTION } from '../state/journey';
 import { clamp, damp } from '../animations/easing';
 import {
-  buildCameraCurves,
   CAMERA_KEYS,
   ISLANDS,
   projectFocusPose,
   projectSlots,
+  sampleCameraPath,
   SECTION_KEYS,
   timelineCameraOffset,
 } from './layout';
@@ -26,7 +26,6 @@ const UP = new THREE.Vector3(0, 1, 0);
 export function CameraRig({ portrait }: { portrait: boolean }) {
   const { camera } = useThree();
   const { focus } = useUI();
-  const curves = useMemo(buildCameraCurves, []);
 
   const pos = useRef(new THREE.Vector3(...CAMERA_KEYS.hero.position));
   const look = useRef(new THREE.Vector3(...CAMERA_KEYS.hero.target));
@@ -55,11 +54,9 @@ export function CameraRig({ portrait }: { portrait: boolean }) {
 
   useFrame((state, delta) => {
     const dt = Math.min(delta, 0.1);
-    const t = clamp(journey.flow / LAST_SECTION);
     const { p, t: tgt, dir, right, up, focusP, focusT, offset, quat, mat } = scratch;
 
-    curves.position.getPoint(t, p);
-    curves.target.getPoint(t, tgt);
+    sampleCameraPath(journey.flow, p, tgt);
 
     // Section-aware framing: pull back on narrow viewports so the island fits.
     const nearest = SECTION_KEYS[Math.min(LAST_SECTION, Math.max(0, Math.round(journey.flow)))];
@@ -68,14 +65,17 @@ export function CameraRig({ portrait }: { portrait: boolean }) {
       dir.copy(p).sub(tgt);
       const pull = 1 + (key.portraitPull - 1) * journey.local;
       p.copy(tgt).add(dir.multiplyScalar(pull));
-      p.y += 0.25 * journey.local;
+      p.y += 0.3 * journey.local;
+      // Aiming lower lifts the island into the top half of a tall screen,
+      // leaving the bottom for the copy block.
+      tgt.y -= 0.85 * journey.local;
     }
 
     // Travelling shot along the experience timeline.
     const timelineIndex = SECTION_KEYS.indexOf('experience');
     const onTimeline = clamp(1 - Math.abs(journey.flow - timelineIndex) / 0.9);
     if (onTimeline > 0.001) {
-      const band = clamp(journey.scroll * LAST_SECTION - (timelineIndex - 0.5));
+      const band = clamp(journey.travel * LAST_SECTION - (timelineIndex - 0.5));
       const [ox, oy, oz] = timelineCameraOffset(band, portrait);
       const island = ISLANDS.experience;
       offset.set(ox, oy, oz).multiplyScalar(onTimeline).applyAxisAngle(UP, island.rotationY);

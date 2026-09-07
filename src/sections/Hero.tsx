@@ -18,7 +18,7 @@ export function Hero() {
         PRAJAPAT
       </h1>
       <p className="lead">Flutter Developer · Software Engineer</p>
-      <p className="body">{profile.tagline}</p>
+      <p className="body sr-only">{profile.tagline}</p>
       <div className="actions">
         <button type="button" className="btn btn--primary" onClick={() => scrollTo(3)}>
           <span className="btn__dot" aria-hidden="true" />

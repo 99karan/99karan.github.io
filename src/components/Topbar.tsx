@@ -12,7 +12,7 @@ export function Topbar() {
         <strong>
           KARAN<em>.</em>
         </strong>
-        <span className="mono">{sectionIdAt(index).toUpperCase()}</span>
+        <span className="mono">{index === 0 ? 'HOME' : sectionIdAt(index).toUpperCase()}</span>
       </button>
       <div className="topbar__right">
         <span className="mono">{profile.location}</span>

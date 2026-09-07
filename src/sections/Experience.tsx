@@ -12,7 +12,7 @@ export function Experience() {
   // The active milestone follows the same band progress the camera uses, so the
   // list and the 3D timeline are never out of step.
   useJourneyFrame(() => {
-    const band = clamp(journey.scroll * LAST_SECTION - (SECTION_INDEX - 0.5));
+    const band = clamp(journey.travel * LAST_SECTION - (SECTION_INDEX - 0.5));
     const count = milestones.length;
     rows.current.forEach((row, i) => {
       if (!row) return;

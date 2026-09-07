@@ -13,6 +13,7 @@ import { useHover, Halo } from '../shared';
 import { HoloPanel } from '../HoloPanel';
 import { useProjectImage } from '../../hooks/useProjectImage';
 import { damp } from '../../animations/easing';
+import { useIslandPresence } from '../../scenes/IslandContext';
 
 const SCREEN_W = 3;
 const SCREEN_H = 1.9;
@@ -32,10 +33,12 @@ function ProjectScreen({ project, slot, focused }: ScreenProps) {
   const quality = useQualityContext();
   const { setFocus } = useUI();
   const { hovered, bind } = useHover();
+  const presence = useIslandPresence();
 
+  // Project screens are the one surface the camera pushes right up against.
   const fallback = useCanvasTexture(
-    Math.round(1280 * quality.textureScale),
-    Math.round(810 * quality.textureScale),
+    Math.round(1600 * quality.textureScale),
+    Math.round(1000 * quality.textureScale),
     drawProjectMock(project),
     [project.id],
   );
@@ -59,12 +62,13 @@ function ProjectScreen({ project, slot, focused }: ScreenProps) {
     const target = slot.scale * (isFocused ? 1.06 : hovered ? 1.03 : 1);
     g.scale.setScalar(damp(g.scale.x, target, 6, dt));
 
+    const p = presence();
     if (screenMat.current) {
-      screenMat.current.opacity = damp(screenMat.current.opacity, dimmed ? 0.28 : 1, 5, dt);
+      screenMat.current.opacity = damp(screenMat.current.opacity, dimmed ? 0.28 : 1, 5, dt) * p;
     }
     if (rim.current) {
       const mat = rim.current.material as THREE.MeshBasicMaterial;
-      mat.opacity = damp(mat.opacity, isFocused ? 0.9 : hovered ? 0.7 : dimmed ? 0.05 : 0.3, 6, dt);
+      mat.opacity = damp(mat.opacity, isFocused ? 0.9 : hovered ? 0.7 : dimmed ? 0.05 : 0.3, 6, dt) * p;
     }
     if (frameRef.current) {
       const mat = frameRef.current.material as THREE.MeshStandardMaterial;
@@ -147,10 +151,10 @@ export function ProjectsIsland() {
   return (
     <group>
       <HoloPanel
-        draw={drawTitlePlate('SELECTED WORK', 'CLICK A SCREEN TO OPEN')}
+        draw={drawTitlePlate('SELECTED WORK', 'SELECT A SCREEN TO OPEN')}
         width={2.6}
         height={0.62}
-        position={[0, portrait ? 4.15 : 2.5, portrait ? -1 : -1.6]}
+        position={[0, portrait ? 3.5 : 3.42, portrait ? -1 : -1.6]}
         parallax={0.05}
         float={0.02}
       />

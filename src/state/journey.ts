@@ -4,6 +4,14 @@ export const SECTION_COUNT = sectionOrder.length;
 export const LAST_SECTION = SECTION_COUNT - 1;
 
 /**
+ * The journey finishes at 88% of the page: the last stretch is dwell time in
+ * the contact room, followed by the fade to darkness. Without it the final
+ * island would only ever be framed on the same pixel the fade starts.
+ */
+export const TRAVEL_END = 0.88;
+export const OUTRO_START = 0.915;
+
+/**
  * A tiny mutable store shared between the DOM overlay and the WebGL scene.
  *
  * It is intentionally *not* React state: the values change every frame and
@@ -14,6 +22,8 @@ export const LAST_SECTION = SECTION_COUNT - 1;
 export interface Journey {
   /** Raw scroll position, 0 → 1 across the whole page. */
   scroll: number;
+  /** Scroll remapped onto the travelling part of the page, 0 → 1. */
+  travel: number;
   /** Plateau-eased position in section space, 0 → LAST_SECTION. */
   flow: number;
   /** Nearest section index. */
@@ -38,6 +48,7 @@ export interface Journey {
 
 export const journey: Journey = {
   scroll: 0,
+  travel: 0,
   flow: 0,
   index: 0,
   local: 1,
@@ -76,5 +87,5 @@ export function sectionIdAt(index: number): SectionId {
 }
 
 export function scrollTargetFor(index: number) {
-  return index / LAST_SECTION;
+  return (index / LAST_SECTION) * TRAVEL_END;
 }

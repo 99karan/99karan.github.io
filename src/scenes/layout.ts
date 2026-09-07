@@ -36,7 +36,7 @@ export const CAMERA_KEYS: Record<SectionId, CameraKey> = {
   about: { position: [-6.0, 2.6, -6.0], target: [-7.5, 2.15, -14], portraitPull: 1.34, drift: 0.3 },
   skills: { position: [3.05, 3.4, -22.2], target: [3.6, 3.2, -31], portraitPull: 1.5, drift: 0.3 },
   projects: { position: [0, 2.9, -38.5], target: [0, 2.6, -49], portraitPull: 1.3, drift: 0.16 },
-  experience: { position: [5.2, 3.2, -56], target: [6, 2.8, -65], portraitPull: 1.36, drift: 0.22 },
+  experience: { position: [5.3, 3.3, -58.1], target: [6, 2.9, -65], portraitPull: 1.5, drift: 0.18 },
   contact: { position: [0, 4.65, -73.2], target: [0, 4.45, -84], portraitPull: 1.36, drift: 0.4 },
 };
 
@@ -44,12 +44,52 @@ export const SECTION_KEYS: SectionId[] = ['hero', 'about', 'skills', 'projects',
 
 const toVec = (v: Vec3) => new THREE.Vector3(...v);
 
-/** Smooth camera spline through every section anchor. */
-export function buildCameraCurves() {
-  const positions = SECTION_KEYS.map((id) => toVec(CAMERA_KEYS[id].position));
-  const targets = SECTION_KEYS.map((id) => toVec(CAMERA_KEYS[id].target));
-  const position = new THREE.CatmullRomCurve3(positions, false, 'catmullrom', 0.28);
-  const target = new THREE.CatmullRomCurve3(targets, false, 'catmullrom', 0.28);
+/**
+ * Control points that bend a segment of the journey. Without them the camera
+ * takes the short way between two anchors — straight through the skill system
+ * and clipping the right-hand project screen. Each via swings the move wide,
+ * which also gives the transition something to look at.
+ */
+const VIA: Record<number, Vec3> = {
+  // skills → projects: pass to the left of the orbiting core.
+  2: [-1.2, 3.2, -29.5],
+  // projects → experience: lift over the gallery instead of through it.
+  3: [0.6, 7.6, -50],
+};
+
+const POSITIONS = SECTION_KEYS.map((id) => toVec(CAMERA_KEYS[id].position));
+const TARGETS = SECTION_KEYS.map((id) => toVec(CAMERA_KEYS[id].target));
+const CONTROLS = POSITIONS.map((p, i) => {
+  const next = POSITIONS[i + 1];
+  if (!next) return p.clone();
+  // A control point at the midpoint makes the quadratic collapse to a straight
+  // line, so segments without a via stay perfectly direct.
+  return VIA[i] ? toVec(VIA[i]) : p.clone().add(next).multiplyScalar(0.5);
+});
+
+function quadratic(out: THREE.Vector3, a: THREE.Vector3, c: THREE.Vector3, b: THREE.Vector3, t: number) {
+  const inv = 1 - t;
+  out.set(0, 0, 0);
+  out.addScaledVector(a, inv * inv);
+  out.addScaledVector(c, 2 * inv * t);
+  out.addScaledVector(b, t * t);
+  return out;
+}
+
+/**
+ * Samples the journey at `flow` (0 → LAST_SECTION). Anchors land exactly on
+ * integers, so a section always frames the way it was authored; the plateau
+ * easing already applied to `flow` means the camera arrives at zero velocity,
+ * which is what makes a direction change between segments invisible.
+ */
+export function sampleCameraPath(flow: number, position: THREE.Vector3, target: THREE.Vector3) {
+  const max = SECTION_KEYS.length - 1;
+  const clamped = Math.max(0, Math.min(max, flow));
+  const i = Math.min(Math.floor(clamped), max - 1);
+  const t = clamped - i;
+
+  quadratic(position, POSITIONS[i], CONTROLS[i], POSITIONS[i + 1], t);
+  target.copy(TARGETS[i]).lerp(TARGETS[i + 1], t);
   return { position, target };
 }
 
@@ -70,8 +110,11 @@ export function projectSlots(count: number, portrait: boolean): Slot[] {
   const angles = portrait
     ? [-0.105, 0.105, -0.105, 0.105]
     : [-0.4, -0.135, 0.135, 0.4];
-  const heights = portrait ? [2.35, 2.35, -2.35, -2.35] : [0, 0, 0, 0];
-  const scale = portrait ? 0.72 : 1;
+  // Portrait stacks two rows in the upper half of the frame; the lower half
+  // belongs to the copy block.
+  // Landscape lifts the whole arc clear of the copy block in the lower-left.
+  const heights = portrait ? [2.05, 2.05, 0.32, 0.32] : [1.1, 1.1, 1.1, 1.1];
+  const scale = portrait ? 0.66 : 1;
 
   return Array.from({ length: count }, (_, i) => {
     const a = angles[i % angles.length];
@@ -108,7 +151,7 @@ export function projectFocusPose(slot: Slot) {
 /* Experience timeline                                                 */
 /* ------------------------------------------------------------------ */
 
-export const TIMELINE_SPAN = 11.5;
+export const TIMELINE_SPAN = 10;
 
 export const TIMELINE_SPAN_PORTRAIT = 8.6;
 

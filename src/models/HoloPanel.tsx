@@ -5,6 +5,7 @@ import { useCanvasTexture, type Draw } from '../lib/canvasTexture';
 import { useQualityContext } from '../hooks/QualityContext';
 import { journey } from '../state/journey';
 import { damp } from '../animations/easing';
+import { useIslandPresence } from '../scenes/IslandContext';
 
 interface HoloPanelProps {
   draw: Draw;
@@ -44,6 +45,8 @@ export function HoloPanel({
 }: HoloPanelProps) {
   const quality = useQualityContext();
   const group = useRef<THREE.Group>(null);
+  const material = useRef<THREE.MeshBasicMaterial>(null);
+  const presence = useIslandPresence();
   const scale = Math.max(0.5, quality.textureScale);
 
   const texture = useCanvasTexture(
@@ -56,6 +59,7 @@ export function HoloPanel({
   useFrame((state, delta) => {
     const g = group.current;
     if (!g) return;
+    if (material.current) material.current.opacity = opacity * presence();
     const t = state.clock.elapsedTime + phase;
     const bob = Math.sin(t * 0.6) * float;
     g.position.y = damp(g.position.y, position[1] + bob, 4, delta);
@@ -69,6 +73,7 @@ export function HoloPanel({
       <mesh>
         <planeGeometry args={[width, height]} />
         <meshBasicMaterial
+          ref={material}
           map={texture}
           transparent
           opacity={opacity}
