@@ -1,12 +1,92 @@
-# Karan Prajapat — Interactive 3D Portfolio
+# Karan Prajapat — Drivable 3D Portfolio
 
-A scroll-driven 3D portfolio built as one continuous space. The visitor starts
-at a futuristic workstation floating in the dark, and scrolling flies the camera
-through six islands — workspace, profile, an orbiting skill system, a project
-gallery, a timeline, and an open room to make contact.
+The portfolio is an island you explore. Drive a car, ride a motorbike, fly a
+plane or a helicopter, or take a speedboat out — every landmark is part of the
+portfolio:
+
+| Place | What it holds |
+| --- | --- |
+| Plaza | Your name in giant knock-over letters, crate stack, cones, a jump ramp |
+| About pavilion | Profile and stats (drive in, press **E**) |
+| Project billboards | One screen per project; pull up and press **E** for the case study |
+| Career road | One gate per milestone — the card appears as you drive through |
+| Skills ring | A monolith per skill |
+| Resume HQ | The resume — read in-page, open the full page, or download the PDF |
+| Lighthouse | Contact links |
+| Airfield / marina | Plane on the runway, boat at the dock |
+
+Ten **skill gems** are hidden around the map (some need the plane, the heli or the
+boat) and progress is saved in `localStorage`. There is also a bowling alley,
+a day/night cycle (**N**), synthesised engine audio, fast travel (**Places**),
+touch controls on phones and gamepad support.
+
+- `/` — the island (default)
+- `/?classic` — the original scroll-driven portfolio, unchanged
+- `/resume.html` — the printable one-page resume
 
 **Stack:** React 18 · TypeScript · Three.js · React Three Fiber · Drei ·
-postprocessing · GSAP · Vite.
+Rapier (via @react-three/rapier) · postprocessing · Vite.
+
+### Controls
+
+| | |
+| --- | --- |
+| `1`–`5` | Car · Bike · Plane · Helicopter · Boat |
+| `W A S D` / arrows | Drive (plane: climb/dive & bank; heli: fly forward & turn) |
+| `Shift` | Boost (plane: full power) |
+| `Space` | Handbrake / drift (heli: climb; `C` descends) |
+| `E` | Open the place you're parked at |
+| `R` · `N` · `M` · `V` · `H` · `P` | Reset · day/night · sound · camera · horn · car paint |
+| Mouse drag / wheel | Orbit / zoom the camera |
+
+### How the island is built
+
+```
+src/drive/
+├─ DriveApp.tsx        app shell: loader, HUD, panels, interaction routing
+├─ DriveStage.tsx      the <Canvas>, world composition, post-processing
+├─ Player.tsx          steps the active vehicle, spawning, effects, zones
+├─ CameraRig.tsx       chase camera (spring, FOV with speed, shake, orbit)
+├─ state.ts            per-frame runtime + a tiny store for the HUD
+├─ input.ts            keyboard / touch / gamepad → one set of control axes
+├─ audio.ts            WebAudio engine synthesis + one-shot sounds
+├─ vehicles/
+│  ├─ sims.ts          the physics: car & bike, plane, helicopter, boat
+│  ├─ Car / Bike / Plane / Heli / Boat.tsx   procedural models
+│  └─ Effects.tsx      particles, skid marks, boat wake
+├─ world/
+│  ├─ map.ts           ← terrain height, coastline, roads, ramps (THE layout)
+│  ├─ placements.ts    where every landmark/zone/tree/gem goes + colliders
+│  ├─ Landscape.tsx    terrain mesh, water shader, sky, clouds
+│  ├─ Landmarks.tsx    pavilion, billboards, gates, lighthouse, airfield, village
+│  ├─ Infrastructure.tsx  roads, runway, plaza, ramps, dock, helipads
+│  ├─ Knockables.tsx   Rapier props: letters, crates, cones, bowling
+│  └─ Collectibles.tsx skill gems
+└─ hud/                HUD, minimap, panels, touch controls
+```
+
+`map.ts` is the single source of truth: physics, terrain mesh, water shading
+and the minimap all sample the same `groundAt()` / `terrainAt()` functions, so
+what you see is always what you drive on. Vehicles use hand-written arcade
+physics (bicycle-model steering with tyre grip and drift, a lift/drag/stall
+flight model, rotor spool and auto-hover, wave buoyancy and planing); Rapier
+only simulates the props you knock over.
+
+Debug helpers: `?quality=low|mid|high` forces a device tier, `?physics` draws
+the Rapier colliders.
+
+### Content
+
+Everything — projects, milestones, skills, socials **and the resume** — still
+lives in [`src/data/portfolio.ts`](src/data/portfolio.ts). The island, the
+classic site, `/resume.html` and the in-page resume preview all read from it.
+
+### Regenerating the resume PDF
+
+After editing `resume` in `portfolio.ts`, run `npm run dev`, open
+<http://localhost:5173/resume.html>, then **Print → Save as PDF** (A4, margins
+"None", background graphics on) and save over
+`public/resume/karan-prajapat-resume.pdf`.
 
 ---
 
@@ -118,16 +198,18 @@ Edit the `projects` array in [`src/data/portfolio.ts`](src/data/portfolio.ts):
   `projectSlots()` in `src/scenes/layout.ts` if you go past four.
 - Skills, milestones and stats live in the same file and behave the same way.
 
-## 6. Adding the resume
+## 6. The resume
 
-1. Save your PDF to `public/resume/karan-prajapat-resume.pdf`.
-2. If you name it differently, update `profile.resume.file` in
-   `src/data/portfolio.ts` (keep the leading `./`).
+The resume is generated from the `resume` object in `src/data/portfolio.ts`:
 
-Two entry points already exist: the floating document at the end of the 3D
-timeline, and the "Download resume" button in the hero. Both open an in-page
-preview generated from `portfolio.ts`, with the PDF download beneath it — so the
-preview stays correct even before you add the file.
+- `/resume.html` — the full one-page A4 resume (printable).
+- `public/resume/karan-prajapat-resume.pdf` — the downloadable PDF (see
+  "Regenerating the resume PDF" above).
+- The in-page preview (Resume HQ on the island, the "Resume" button, and the
+  classic site's "Download resume") uses the same data.
+
+Add your degree to `resume.education` — the Education section only appears
+once it has an entry.
 
 ## 7. GitHub / LinkedIn / email links
 

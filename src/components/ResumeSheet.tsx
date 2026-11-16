@@ -1,10 +1,10 @@
-import { milestones, profile, skills } from '../data/portfolio';
+import { profile, resume } from '../data/portfolio';
 import { useUI } from '../state/ui';
 import { Sheet } from './Sheet';
 
 /**
- * A readable preview built from the same data file as the rest of the site, so
- * it can never drift from the PDF's story. The button downloads the real file.
+ * In-page preview built from the same `resume` data as /resume.html and the
+ * PDF, so the three can never drift apart.
  */
 export function ResumeSheet() {
   const { resumeOpen, setResumeOpen } = useUI();
@@ -18,28 +18,42 @@ export function ResumeSheet() {
     >
       <div className="resume">
         <h3>{profile.name}</h3>
-        <div className="role">Flutter Developer · Software Engineer</div>
-        <p className="tagline">{profile.tagline}</p>
-        <hr />
-        <h4>Profile</h4>
-        <p>{profile.about.body}</p>
+        <div className="role">{resume.headline}</div>
+        <p className="tagline">{resume.summary}</p>
         <hr />
         <h4>Experience</h4>
-        {milestones.slice(0, 3).map((milestone) => (
-          <div key={milestone.id} style={{ marginBottom: '0.7rem' }}>
+        {resume.experience.map((job) => (
+          <div key={job.role + job.period} style={{ marginBottom: '0.7rem' }}>
             <div className="row">
-              <b>{milestone.role}</b>
-              <span>{milestone.period}</span>
+              <b>
+                {job.role} · {job.org}
+              </b>
+              <span>{job.period}</span>
             </div>
-            <p>{milestone.detail}</p>
+            <ul>
+              {job.bullets.map((b) => (
+                <li key={b}>{b}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+        <hr />
+        <h4>Selected projects</h4>
+        {resume.projects.map((p) => (
+          <div key={p.name} style={{ marginBottom: '0.6rem' }}>
+            <div className="row">
+              <b>{p.name}</b>
+              <span>{p.stack}</span>
+            </div>
+            <p>{p.bullets.join(' ')}</p>
           </div>
         ))}
         <hr />
         <h4>Skills</h4>
         <div className="grid2">
-          {skills.map((skill) => (
-            <p key={skill.name}>
-              <b>{skill.name}</b> — {skill.detail}
+          {resume.skills.map((g) => (
+            <p key={g.group}>
+              <b>{g.group}</b> — {g.items.join(', ')}
             </p>
           ))}
         </div>
@@ -53,10 +67,13 @@ export function ResumeSheet() {
       <div className="sheet__actions">
         <a className="btn btn--primary" href={profile.resume.file} download target="_blank" rel="noopener noreferrer">
           <span className="btn__dot" aria-hidden="true" />
-          Download resume
+          Download PDF
+        </a>
+        <a className="btn" href="./resume.html" target="_blank" rel="noopener noreferrer">
+          Full page
         </a>
         <button type="button" className="btn btn--ghost" onClick={() => setResumeOpen(false)}>
-          ← Back to the space
+          ← Back
         </button>
       </div>
     </Sheet>

@@ -223,3 +223,108 @@ export const socials = [
 ] as const;
 
 export const sectionOrder: SectionId[] = ['hero', 'about', 'skills', 'projects', 'experience', 'contact'];
+
+/* ------------------------------------------------------------------ */
+/* Resume                                                              */
+/* ------------------------------------------------------------------ */
+
+export interface ResumeRole {
+  role: string;
+  org: string;
+  period: string;
+  location?: string;
+  bullets: string[];
+}
+
+export interface ResumeProject {
+  name: string;
+  stack: string;
+  link?: string;
+  bullets: string[];
+}
+
+export interface ResumeEducation {
+  degree: string;
+  school: string;
+  period: string;
+  note?: string;
+}
+
+/**
+ * Drives /resume.html, the downloadable PDF and the in-site resume preview.
+ * Keep it to what fits on one A4 page.
+ */
+export const resume = {
+  headline: 'Flutter Developer · Software Engineer',
+  website: 'https://99karan.github.io',
+  summary:
+    'Flutter developer with 2+ years shipping production mobile apps end to end — architecture, state management, API integration and store releases. I structure apps with Riverpod and MVVM so features stay testable as they grow, and I spend my spare cycles on backend systems, algorithmic trading and real-time 3D on the web: my portfolio is a drivable 3D island with five hand-built vehicle physics models.',
+  experience: [
+    {
+      role: 'Flutter Developer',
+      org: 'Product work',
+      period: '2024 — Present',
+      bullets: [
+        'Build and maintain production Flutter apps end to end: architecture, state management, API integration and release.',
+        'Structure features with Riverpod + MVVM so business logic is unit-testable and independent of the UI.',
+        'Integrate Firebase (Auth, Firestore, push) and REST services behind typed repository layers.',
+        'Own the release path: flavour configs, CI builds and Play Store / App Store submissions.',
+      ],
+    },
+    {
+      role: 'Software Developer',
+      org: 'Applications & APIs',
+      period: '2023 — 2024',
+      bullets: [
+        'Moved from feature work into architecture: introduced MVVM structure, typed API layers and caching strategies.',
+        'Built a reusable UI component system and custom motion shared across screens and apps.',
+      ],
+    },
+    {
+      role: 'Foundations',
+      org: 'Systems & experiments',
+      period: '2022 — 2023',
+      bullets: ['C++ and Python fundamentals, data structures and algorithms — and the first shipped mobile projects.'],
+    },
+  ] satisfies ResumeRole[],
+  projects: [
+    {
+      name: 'FinCard',
+      stack: 'Flutter · Riverpod · Firebase',
+      bullets: [
+        'Financial-education app: card-sized lessons paired with a lightweight money tracker.',
+        'Offline-first persistence, feature-split Riverpod state, Firestore sync and push reminders.',
+      ],
+    },
+    {
+      name: 'Algorithmic Trading Toolkit',
+      stack: 'Python · Pandas · REST APIs',
+      bullets: [
+        'Vectorised backtesting over historical OHLCV; every strategy reports drawdown, exposure and hit rate.',
+        'Broker and data APIs wrapped behind one typed interface; scheduled jobs with alerting.',
+      ],
+    },
+    {
+      name: 'Drivable 3D Portfolio',
+      stack: 'TypeScript · React Three Fiber · Rapier',
+      link: '99karan.github.io',
+      bullets: [
+        'Open-world island with car, motorbike, plane, helicopter and boat — each with its own physics model.',
+        'Procedural terrain, water shader, synthesised engine audio, touch controls and adaptive quality tiers.',
+      ],
+    },
+  ] satisfies ResumeProject[],
+  skills: [
+    { group: 'Mobile', items: ['Flutter', 'Dart', 'Riverpod', 'MVVM', 'Firebase'] },
+    { group: 'Backend & data', items: ['REST APIs', 'Python', 'Pandas', 'Automation'] },
+    { group: 'Web & 3D', items: ['TypeScript', 'React', 'Three.js', 'WebGL / GLSL'] },
+    { group: 'Foundations', items: ['C++', 'Data structures', 'Git', 'CI builds'] },
+  ],
+  /** Add your degree here — the section only renders when this has entries. */
+  education: [] as ResumeEducation[],
+  strengths: [
+    'Ships end to end — from architecture to store release',
+    'Readable, testable code over clever code',
+    'Cares about motion and the small details',
+  ],
+};
