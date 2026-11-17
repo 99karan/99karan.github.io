@@ -13,7 +13,7 @@ export function ResumePage() {
     <>
       <div className="toolbar" role="toolbar" aria-label="Resume actions">
         <a href="./" className="toolbar__link">
-          ← Back to the island
+          ← Back to the site
         </a>
         <div className="toolbar__actions">
           <button type="button" onClick={() => window.print()}>

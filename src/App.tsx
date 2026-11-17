@@ -13,6 +13,7 @@ import { useQuality, type Quality } from './hooks/useQuality';
 import { journeyHeight, useJourneyDriver } from './hooks/useJourney';
 import { useScrollLock } from './hooks/useScrollLock';
 import { UIProvider, useUI } from './state/ui';
+import './styles/index.css';
 
 /** The invisible column that gives the page something to scroll. */
 function ScrollTrack() {

@@ -1,4 +1,32 @@
-# Karan Prajapat — Drivable 3D Portfolio
+# Karan Prajapat — Portfolio
+
+## The main site and the Repo City
+
+`/` is an editorial, dark (or light) one-page site: a particle field in the
+background, an x-ray lens that shows the "spec" under any text you hover, and a
+scan line that builds each block as it scrolls in.
+
+Its centrepiece is the **Repo City**: every public GitHub repo is a building.
+
+| Building | Comes from |
+| --- | --- |
+| Floors | Commits (one floor per commit) |
+| Setbacks (up to 3 tiers) | Top languages, bottom to top; each tier as tall as its share of the code |
+| Colour | Language (GitHub's linguist colours) |
+| Footprint | Code size (log scale) |
+| Blinking beacon | Pushed in the last 45 days |
+| Dashed ring | Fork |
+
+Flutter platform scaffolding (CMake, C, Ruby, Obj-C, the HTML shell) is left
+out of a Flutter repo's tiers, so a young app reads as Dart, not CMake.
+
+- Live data comes from the GitHub API in the browser (cached an hour).
+- `npm run repos` writes `src/data/repos.json`, the fallback snapshot (and the
+  source of README summaries). CI runs it before every build, and the deploy
+  workflow rebuilds daily so new repos and commits appear on their own.
+- Copy lives in `src/site/content.ts`; the city in `src/site/city/`.
+
+## The drivable island (`/?drive`)
 
 The portfolio is an island you explore. Drive a car, ride a motorbike, fly a
 plane or a helicopter, or take a speedboat out — every landmark is part of the
@@ -20,7 +48,8 @@ boat) and progress is saved in `localStorage`. There is also a bowling alley,
 a day/night cycle (**N**), synthesised engine audio, fast travel (**Places**),
 touch controls on phones and gamepad support.
 
-- `/` — the island (default)
+- `/` — the main site with the Repo City (default)
+- `/?drive` — the island
 - `/?classic` — the original scroll-driven portfolio, unchanged
 - `/resume.html` — the printable one-page resume
 

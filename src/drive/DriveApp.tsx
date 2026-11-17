@@ -13,6 +13,7 @@ import { installKeyboard, onAction } from './input';
 import { runtime, store, useStore } from './state';
 import { zones } from './world/placements';
 import { profile } from '../data/portfolio';
+import '../styles/index.css';
 import './drive.css';
 
 function Island() {
@@ -91,9 +92,9 @@ function Island() {
             <h1>{profile.name}</h1>
             <p>Your browser couldn&rsquo;t start the 3D island (WebGL is unavailable). Everything is still here:</p>
             <div className="intro__actions" style={{ justifyContent: 'center', marginTop: '1rem' }}>
-              <a className="btn btn--primary" href="?classic">
+              <a className="btn btn--primary" href="./">
                 <span className="btn__dot" aria-hidden="true" />
-                Open the classic site
+                Open the main site
               </a>
               <a className="btn" href="./resume.html">
                 Read the resume

@@ -129,8 +129,8 @@ function TopBar() {
         <button type="button" className="chip" onClick={() => store.set({ panel: 'contact' })}>
           Contact
         </button>
-        <a className="chip chip--ghost" href="?classic">
-          Classic site
+        <a className="chip chip--ghost" href="./">
+          Main site
         </a>
         <button type="button" className="chip chip--icon" aria-label={night ? 'Switch to day' : 'Switch to night'} title="Day / night (N)" onClick={() => store.set({ night: !night })}>
           {night ? '☀' : '☾'}
@@ -264,8 +264,8 @@ function Intro({ touchUI }: { touchUI: boolean }) {
           <a className="btn btn--ghost" href="./resume.html">
             Just the resume
           </a>
-          <a className="btn btn--ghost" href="?classic">
-            Classic site
+          <a className="btn btn--ghost" href="./">
+            Main site
           </a>
         </div>
       </div>

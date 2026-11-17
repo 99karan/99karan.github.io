@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -b --force"
+    "typecheck": "tsc -b --force",
+    "repos": "node scripts/fetch-repos.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^9.122.0",
